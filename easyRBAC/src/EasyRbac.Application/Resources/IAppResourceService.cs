@@ -8,13 +8,17 @@ namespace EasyRbac.Application.Resources
 {
     public interface IAppResourceService
     {
-        Task<List<AppAndResouceDto>> GetUserManagedResouceAsync(long userId);
-        Task<List<AppResourceDto>> GetUserResouceAsync(long appId, long userId);
-        Task<List<AppResourceDto>> GetResouceTreeAsync(string parentResouceId);
-        Task<List<AppResourceDto>> GetAppResouceAsync(long appId);
+        Task<List<AppAndResourceDto>> GetUserManagedResourceAsync(long userId);
+        Task<List<AppResourceDto>> GetUserResourceAsync(long appId, long userId);
+        Task<List<AppResourceDto>> GetResourceTreeAsync(string parentResourceId);
+        Task<List<AppResourceDto>> GetAppResourceAsync(long appId);
         Task<AppResourceDto> GetOneAsync(string id);
-        Task EditAsync(string id, AppResourceDto resouce);
-        Task AddResouceAsync(AppResourceDto resouce);
-        Task DisableResouceAsync(string id);
+        Task EditAsync(string id, AppResourceDto Resource);
+        Task AddResourceAsync(AppResourceDto Resource, string parentId);
+        Task DisableResourceAsync(string id);
+
+        Task<List<string>> GetRoleResourceIdsAsync(long appId, long roleId);
+
+        Task ChangeRoleResourcesAsync(long roleId, List<string> resourceIds);
     }
 }

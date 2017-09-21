@@ -38,16 +38,16 @@ DEFAULT CHARACTER SET = utf8mb4;
 CREATE TABLE IF NOT EXISTS `easyrbac`.`app_resouce` (
   `id` VARCHAR(200) NOT NULL,
   `applicationId` BIGINT(20) NOT NULL,
-  `resouceCode` VARCHAR(45) NOT NULL,
-  `resouceName` VARCHAR(45) NOT NULL,
+  `resourceCode` VARCHAR(45) NOT NULL,
+  `resourceName` VARCHAR(45) NOT NULL,
   `enable` BIT(1) NOT NULL,
   `url` VARCHAR(100) NULL DEFAULT NULL,
-  `resouceType` TINYINT(4) NOT NULL,
+  `resourceType` TINYINT(4) NOT NULL,
   `iconUrl` VARCHAR(45) NULL DEFAULT NULL,  
   `parameters` VARCHAR(45) NULL DEFAULT NULL,
   `describe` VARCHAR(200) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `app_resouce` (`applicationId` ASC, `resouceCode` ASC))
+  UNIQUE INDEX `app_resouce` (`applicationId` ASC, `resourceCode` ASC))
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4;
 
@@ -61,3 +61,26 @@ CREATE TABLE IF NOT EXISTS `easyrbac`.`role` (
 ENGINE = InnoDB
 DEFAULT CHARACTER SET = utf8mb4
 
+CREATE TABLE `easyrbac`.`app_resource_rel` (
+  `id` BIGINT NOT NULL,
+  `appId` BIGINT NOT NULL,
+  `resourceId` VARCHAR(200) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `appId` (`appId` ASC));
+
+
+CREATE TABLE `easyrbac`.`role_user_rel` (
+  `id` BIGINT NOT NULL,
+  `userId` BIGINT NOT NULL,
+  `roleId` BIGINT NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `userId_ix` (`userId` ASC),
+  INDEX `roleId_ix` (`roleId` ASC));
+
+
+  CREATE TABLE `easyrbac`.`role_resource_rel` (
+  `id` BIGINT NOT NULL,
+  `role_id` BIGINT NOT NULL,
+  `resource_id` VARCHAR(200) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `role_resouce_IX` (`role_id` ASC, `resource_id` ASC));

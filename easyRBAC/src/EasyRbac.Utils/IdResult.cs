@@ -29,7 +29,7 @@ namespace EasyRbac.Utils
             long baseNum = 0L;
             //|--1位符号--|--32位时间戳--|--21位序列--|--10位机器码--|
             return baseNum | Timestamp << 31 | Sequence << 10 | this.NodeId;
-            //|--1位符号--|--32位时间戳--|--24位序列--|--7位机器码--|
+            ////| --1位符号-- | --32位时间戳-- | --24位序列-- | --7位机器码-- |
             //return baseNum | Timestamp << 31 | Sequence << 7 | this.NodeId;
         }
 

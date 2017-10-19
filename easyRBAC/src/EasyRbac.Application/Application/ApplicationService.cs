@@ -9,6 +9,8 @@ using EasyRbac.Dto.Application;
 using EasyRbac.Reponsitory;
 using EasyRbac.Reponsitory.BaseRepository;
 using EasyRbac.Utils;
+using MyUtility.Commons.Encrypt;
+using MyUtility.Commons.IdGenerate;
 
 namespace EasyRbac.Application.Application
 {
@@ -43,7 +45,8 @@ namespace EasyRbac.Application.Application
             {
                 AppName =  value.AppName,
                 AppCode = value.AppCode,
-                Descript = value.Descript
+                Descript = value.Descript,
+                CallbackUrl = value.CallbackUrl
             }, x => x.Id == id);
         }
 
@@ -60,6 +63,12 @@ namespace EasyRbac.Application.Application
         {
             return this._appRepository.QueryFirstAsync(x => x.Id == id)
                 .ContinueWith(x=>this._mapper.Map<ApplicationInfoDto>(x.Result));
+        }
+
+        public Task<ApplicationInfoDto> GetOneAsync(string code)
+        {
+            return this._appRepository.QueryFirstAsync(x => x.AppCode == code)
+                .ContinueWith(x => this._mapper.Map<ApplicationInfoDto>(x.Result));
         }
 
         public async Task<PagingList<ApplicationInfoDto>> SearchAppAsync(string appName, int pageIndex, int pageSize)

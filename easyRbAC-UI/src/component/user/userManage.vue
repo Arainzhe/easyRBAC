@@ -13,37 +13,56 @@
                     el-button-group.right-buttons
                         el-button(icon="delete",size="mini",type="danger",@click="deleteUser(index,u.id)")
                         el-button(icon="edit",size="mini",type="warning",@click="editUser(u.id)")
-                        el-button(icon="information",size="mini",type="info")
+                        el-button(icon="setting",size="mini",type="primary",@click="doChangePwd(u.id)")
+                        el-button(icon="information",size="mini",type="info",@click="showUserInfo(u)")
             el-pagination(small,layout="prev, pager, next",:total="page.totalCount",:page-size="page.pageSize")
-    el-col(:span="8")
-        add-page(v-if="showAddUser",v-on:addedUserFinish="addedUserHandle")
-        router-view
+    el-col(:span="18")
+        add-page(v-if="showStatus.showAddUser",v-on:addedUserFinish="addedUserHandle")
+        change-pwd(v-if="showStatus.showChangePwd",:userId="selectUserId",@closeChangePwd="closeChangePwdHandler")
+        edit-user(v-if="showStatus.editUser",:userId="selectUserId",@close="closeChangePwdHandler")
+        user-info(v-if="showStatus.userInfo",:userInfo="selectUser",@close="closeChangePwdHandler")
 </template>
 
 <script>
 import { userService } from '../../service/userService.ts'
 import addPage from './addPage.vue'
+import changePwd from './changePwd.vue'
+import editUser from './editUser'
+import userInfo from './userInfo'
 
 export default {
     data() {
         return {
             userName: "",
+            selectUserId: "",
             users: [],
             page: {},
-            showAddUser: false
+            selectUser:null,
+            showStatus: {
+                showAddUser: false,
+                showChangePwd: false,
+                editUser :false,
+                userInfo :false
+            }
         }
     },
     methods: {
+        showUserInfo(user){
+            this.closeAll();
+            this.selectUser = user;
+            this.showStatus.userInfo = true;
+        },
         iconClickHandler() {
             userService.getUsers(this.userName, 1, 20)
         },
         addUser() {
-            this.$router.push({ path: "/user" })
+            this.closeAll();            
             this.showAddUser = !this.showAddUser;
         },
         editUser(userId) {
-            this.showAddUser = false;
-            this.$router.push({ path: `/user/edit/${userId}` })
+            this.selectUserId = userId;
+            this.closeAll();
+            this.showStatus.editUser = true;
         },
         async getUserLst() {
             let users = await userService.getUsers("", 1, 20);
@@ -54,7 +73,7 @@ export default {
             if (refresh) {
                 this.getUserLst();
             }
-            this.showAddUser = false;
+            this.closeAll();
         },
         async deleteUser(index, userId) {
             this.$confirm('确定删除此用户?', '提示', {
@@ -69,13 +88,29 @@ export default {
                     message: '删除成功!'
                 });
             }).catch();
+        },
+        doChangePwd(userId) {
+            this.closeAll()
+            this.showStatus.showChangePwd = true;
+            this.selectUserId = userId;
+        },
+        closeChangePwdHandler() {
+            this.closeAll();
+        },
+        closeAll() {
+            for (let key of Object.keys(this.showStatus)) {
+                this.showStatus[key] = false
+            }
         }
     },
     mounted: async function() {
         await this.getUserLst();
     },
     components: {
-        addPage
+        addPage,
+        changePwd,
+        editUser,
+        userInfo
     }
 }
 </script>
@@ -86,9 +121,10 @@ export default {
 }
 
 .item {
-    padding: 8px 0;    
+    padding: 8px 0;
 }
-.right-buttons{
+
+.right-buttons {
     float: right;
 }
 

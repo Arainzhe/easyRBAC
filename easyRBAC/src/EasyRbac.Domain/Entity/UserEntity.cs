@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using EasyRbac.Utils;
+using MyUtility.Commons.Encrypt;
 using SQLinq;
 
 namespace EasyRbac.Domain.Entity
@@ -35,7 +36,7 @@ namespace EasyRbac.Domain.Entity
         public List<AppResourceEntity> Resources { get; set; }
 
         [SQLinqColumn(Ignore = true)]
-        public List<ResourceScope> ResourceScopes { get; set; }
+        public List<UserManageResourceScope> ResourceScopes { get; set; }
 
         public static UserEntity NewUser(long id,string userName,string encryptedPwd,string salt,string realName)
         {

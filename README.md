@@ -1,4 +1,4 @@
-# easyRBAC
+# 伊贼瑞贝卡 (easyRBAC)
 我要的很简单，基于RBAC管理权限，有容易上手的UI，最好送给我一个看得过去的SSO就更棒了
 
 
@@ -9,3 +9,21 @@
 我现在又遇到了很多这样的权限管理的需求，大的小的系统，只要有后台的系统都会要这玩意儿，我真是怕了~那我就做一个，OK？
 
 ps:当年要是有个这种小清新多美好啊~
+
+## Build Status
+[![Build Status](https://travis-ci.org/uliian/easyRBAC.svg?branch=master)](https://travis-ci.org/uliian/easyRBAC)
+
+***
+## Road Map
+
+- [x] 用户编辑、增删
+- [x] 用户分组
+- [x] 用户分组权限
+- [x] 用户权限
+- [x] 范围管理权限
+- [x] SSO
+- [x] 用户信息
+- [x] sso回调方式选择
+- [x] 后台授权、鉴权
+- [ ] Swagger支持
+- [x] SSO后系统获取用户ACL

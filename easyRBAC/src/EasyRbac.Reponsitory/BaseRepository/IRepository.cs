@@ -22,6 +22,8 @@ namespace EasyRbac.Reponsitory.BaseRepository
 
         Task<T> QueryFirstAsync(Expression<Func<T, bool>> condition);
 
-        IDbConnection DbConnection { get; }
+        Task<TOut> QueryAndSelectFirstOrDefaultAsync<TOut>(Expression<Func<T, bool>> condition, Expression<Func<T, object>> selector);
+
+        Task<TOut> QueryAndSelectAsync<TOut>(Expression<Func<T, bool>> condition, Expression<Func<T, object>> selector);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Autofac;
 using EasyRbac.Application.User;
@@ -20,6 +21,9 @@ using EasyRbac.Web.WebExtentions;
 using EasyRbac.Utils.Denpendency;
 using EasyRbac.Reponsitory.BaseRepository;
 using EasyRbac.Reponsitory.Helper;
+using EasyRbac.Web.Options;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
 using MySql.Data.MySqlClient;
 using SQLinq;
 using SQLinq.Dialect;
@@ -53,10 +57,21 @@ namespace EasyRbac.Web
                     {
                         options.SerializerSettings.Converters.Add(new LongToStringConverter());
                     })
-                .AddFluentValidation(fv=>fv.RegisterValidatorsFromAssemblyContaining<CreateUserDtoVerify>());
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateUserDtoVerify>());
             services.AddUtils(this.Configuration);
             services.UseDtoAutoMapper();
             services.AddCors();
+
+
+            services.AddAuthentication(
+                option =>
+                {
+                    option.DefaultScheme = "token";
+                    option.AddScheme<TokenAuthenticationHandler>("token", "token");
+                });
+
+            IConfiguration appConfiguration = this.Configuration.GetSection("app");
+            services.Configure<AppOption>(appConfiguration);
             //services.AddSingleton<ISqlDialect, MySqlDialect>();
         }
 
@@ -70,9 +85,9 @@ namespace EasyRbac.Web
         {
             var sss = Assembly.Load("EasyRbac.DomainService");
 
-            builder.RegisterAssemblyTypes(Assembly.GetAssembly(typeof(UserControllerService))).AsImplementedInterfaces().InstancePerLifetimeScope();
+            builder.RegisterAssemblyTypes(Assembly.GetAssembly(typeof(UserService))).AsImplementedInterfaces().InstancePerLifetimeScope();
             builder.RegisterGeneric(typeof(BaseRepository<>)).As(typeof(IRepository<>)).InstancePerLifetimeScope();
-            builder.RegisterAssemblyTypes(Assembly.Load("EasyRbac.Reponsitory"),sss).AsImplementedInterfaces();
+            builder.RegisterAssemblyTypes(Assembly.Load("EasyRbac.Reponsitory"), sss).AsImplementedInterfaces();
             var connStr = this.Configuration.GetConnectionString("easyRBAc");
             builder.RegisterType<MySqlDialect>().As<ISqlDialect>().InstancePerLifetimeScope();
             builder.Register(c => new MySqlConnection(connStr)).As<IDbConnection>().InstancePerLifetimeScope();
@@ -87,7 +102,7 @@ namespace EasyRbac.Web
 
             if (env.IsDevelopment())
             {
-                //app.UseDeveloperExceptionPage();
+                //app.UseStatusCodePages();
                 app.UseMiddleware<ExceptionHandlerMiddleware>();
             }
             else
@@ -98,13 +113,15 @@ namespace EasyRbac.Web
             app.UseCors(
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:8010")
+                    builder.WithOrigins("http://localhost:*","http://*.uliian:*")
                         .AllowAnyOrigin()
                         .AllowAnyHeader()
+                        .AllowCredentials()
                         .AllowAnyMethod();
                 });
-
+            app.UseAuthentication();
             app.UseMvc();
+            
         }
     }
 }
